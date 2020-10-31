@@ -413,7 +413,7 @@ class App extends Component {
                   {this.state.showIl && 
                     <Box pad='small' align='center'>
                       <Paragraph size='large' style={{whiteSpace: 'pre', fontWeight: 600, lineHeight: 1.6}} textAlign='center'>
-                        Potential (Im)Permanent Loss: {this.state.impermanentLoss}%{`\n`}
+                        Historic (Im)Permanent Loss: {this.state.impermanentLoss}%{`\n`}
                         HODL Returns: {this.state.returns}%{`\n`}
                         HODL - IL: {this.state.returnSubIl}%
                       </Paragraph>
