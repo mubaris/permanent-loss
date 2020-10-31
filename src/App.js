@@ -21,7 +21,7 @@ const theme = {
       brand: '#2c2f36',
     },
     font: {
-      family: 'Raleway',
+      family: 'Work Sans',
       size: '14px',
       height: '20px',
     },
