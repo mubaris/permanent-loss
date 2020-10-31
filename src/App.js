@@ -361,7 +361,7 @@ class App extends Component {
                   onClick={() => this.setState({ showSidebar: !this.state.showSidebar })}
                 /> */}
               </AppBar>
-              <Box direction='row'>
+              <Box direction='row' overflow={{ 'horizontal': 'hidden' }}>
                 <Box flex align='center' justify='center'>
                 <Box direction='row'>
                     <FormField label="From" margin='xsmall'>
