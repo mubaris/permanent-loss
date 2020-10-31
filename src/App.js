@@ -14,6 +14,7 @@ import { NumberInput, DateInput } from 'grommet-controls';
 import { PieChart } from 'grommet-controls/chartjs';
 import { List } from 'immutable';
 import dayjs from 'dayjs';
+import ReactGA from 'react-ga';
 
 const theme = {
   global: {
@@ -174,6 +175,10 @@ class App extends Component {
     selectedAssets: ['ethereum', 'bitcoin'],
     showIl: false,
     cache: {}
+  }
+
+  componentDidMount() {
+    ReactGA.initialize('G-EYY1ST5CJC');
   }
 
   changeWeight(i, e) {
