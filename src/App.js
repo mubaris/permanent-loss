@@ -2,17 +2,14 @@ import React, { Component } from 'react';
 import {
   Box,
   Button,
-  Collapsible,
   Heading,
   Grommet,
-  Layer,
   ResponsiveContext,
-  TextInput,
   FormField,
   Select,
   Paragraph
 } from 'grommet';
-import { FormClose, Notification } from 'grommet-icons';
+// import { FormClose, Notification } from 'grommet-icons';
 import { NumberInput, DateInput } from 'grommet-controls';
 import { PieChart } from 'grommet-controls/chartjs';
 import { List } from 'immutable';
@@ -187,7 +184,7 @@ class App extends Component {
     let weights = this.state.assetWeights;
     const d = v - weights.get(i);
     // console.log(weights, v, i, d);
-    if (i == weights.size - 1) {
+    if (i === weights.size - 1) {
       weights = weights.set(i, v);
       weights = weights.update(0, x => (x - d));
     } else {
@@ -261,7 +258,7 @@ class App extends Component {
   normalizeWeights(weights) {
     // console.log(weights, "input")
     const sum = weights.reduce((a,b) => a + b, 0);
-    if (sum != 100) {
+    if (sum !== 100) {
       for (let i = 0; i < weights.size; i++) { weights = weights.update(i, w => w * 100 / sum) }
       // console.log(weights, "output", sum);
       return weights
@@ -349,8 +346,8 @@ class App extends Component {
 
   render() {
     // const { impermanentLoss } = this.state;
-    const now = dayjs();
-    const threeMonths = dayjs().subtract(3, 'month');
+    // const now = dayjs();
+    // const threeMonths = dayjs().subtract(3, 'month');
     const options = this.state.assetList.map(a => a.display);
     return (
       <Grommet theme={theme} themeMode="dark" full>
