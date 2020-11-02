@@ -7,10 +7,11 @@ import {
   ResponsiveContext,
   FormField,
   Select,
-  Paragraph
+  Paragraph,
+  DateInput
 } from 'grommet';
 // import { FormClose, Notification } from 'grommet-icons';
-import { NumberInput, DateInput } from 'grommet-controls';
+import { NumberInput } from 'grommet-controls';
 import { PieChart } from 'grommet-controls/chartjs';
 import { List } from 'immutable';
 import dayjs from 'dayjs';
@@ -38,91 +39,97 @@ const assetList = [
   {
     id: 'ethereum',
     display: 'ETH',
-    limit: '01-01-2017',
+    limit: '01/01/2017',
     color: '#4e8ee9'
   },
   {
     id: 'bitcoin',
     display: 'BTC',
-    limit: '01-01-2017',
+    limit: '01/01/2017',
     color: '#f59621'
   },
   {
     id: 'usd',
     display: 'USD Stablecoins',
-    limit: '01-01-2017',
+    limit: '01/01/2017',
     color: '#e5e8c9'
   },
   {
     id: 'chainlink',
     display: 'LINK',
-    limit: '12-01-2017',
+    limit: '12/01/2017',
     color: '#2a5ada'
   },
   {
     id: 'havven',
     display: 'SNX',
-    limit: '03-30-2018',
+    limit: '03/30/2018',
     color: '#00d1ff'
   },
   {
     id: 'uma',
     display: 'UMA',
-    limit: '05-01-2020',
+    limit: '05/01/2020',
     color: '#ff4a4a'
   },
   {
     id: 'compound-governance-token',
     display: 'COMP',
-    limit: '06-18-2020',
+    limit: '06/18/2020',
     color: '#00d395'
   },
   {
     id: 'uniswap',
     display: 'UNI',
-    limit: '09-18-2020',
+    limit: '09/18/2020',
     color: '#ff006f'
+  },
+  {
+    id: 'balancer',
+    display: 'BAL',
+    limit: '06/24/2020',
+    color: '#000000'
   },
   {
     id: 'maker',
     display: 'MKR',
-    limit: '12-21-2017',
+    limit: '12/21/2017',
     color: '#53aea0'
   },
   {
     id: 'yearn-finance',
     display: 'YFI',
-    limit: '07-20-2020',
+    limit: '07/20/2020',
     color: '#006ae2'
   },
   {
     id: 'republic-protocol',
     display: 'REN',
-    limit: '03-05-2018',
+    limit: '03/05/2018',
     color: '#080817'
   },
   {
     id: '0x',
     display: 'ZRX',
-    limit: '10-26-2017',
+    limit: '10/26/2017',
     color: '#1d2227'
   },
   {
     id: 'kyber-network',
     display: 'KNC',
-    limit: '11-07-2017',
+    limit: '11/07/2017',
     color: '#31cb9e'
   },
   {
     id: 'nxm',
     display: 'NXM',
-    limit: '07-11-2020',
+    limit: '07/11/2020',
     color: '#20252e'
   },
   {
     id: 'numeraire',
     display: 'NMR',
-    limit: '07-15-2017',
+    limit: '07/15/2017',
     color: '#221e1f'
   }
 ];
@@ -143,7 +150,10 @@ const symbols = {
   'kyber-network': 'KNC',
   'nxm': 'NXM',
   'numeraire': 'NMR',
+  'balancer': 'BAL'
 }
+
+const dateFormat = "MM/DD/YYYY";
 
 const AppBar = (props) => (
   <Box
@@ -167,9 +177,9 @@ class App extends Component {
     nAssets: 2,
     assetWeights: List([50.00, 50.00]),
     assetDeltas: List([0.00, 0.00]),
-    toDate: dayjs().format('MM-DD-YYYY'),
-    fromDate: dayjs().subtract(3, 'month').format('MM-DD-YYYY'),
-    dateBounds: ['01-01-2017', dayjs().format('MM-DD-YYYY')],
+    toDate: dayjs().format(dateFormat),
+    fromDate: dayjs().subtract(3, 'month').format(dateFormat),
+    dateBounds: ['01/01/2017', dayjs().format(dateFormat)],
     assetList: assetList,
     displayList: assetList.map(a => a.display),
     selectedAssets: ['ethereum', 'bitcoin'],
@@ -182,6 +192,7 @@ class App extends Component {
   }
 
   changeWeight(i, e) {
+    // console.log(i, e);
     let v = parseFloat(e.target.value);
     if (isNaN(v)) {
       v = 1;
@@ -202,12 +213,13 @@ class App extends Component {
   }
 
   changeDate(direction, e) {
+    // console.log(direction, e)
     if (direction === 'from') {
-      this.setState({ fromDate: e.target.value }, () => {
+      this.setState({ fromDate: e.value }, () => {
         this.fetchAndCalculate()
       });
     } else if (direction === 'to') {
-      this.setState({ toDate: e.target.value }, () => {
+      this.setState({ toDate: e.value }, () => {
         this.fetchAndCalculate()
       });
     } else {
@@ -223,10 +235,12 @@ class App extends Component {
     const selectedAssets = this.state.selectedAssets;
     selectedAssets[i] = this.state.assetList[index].id;
     const startDate = this.state.assetList[index].limit;
-    const dateBounds = [startDate, dayjs().format('MM-DD-YYYY')];
+    const dateBounds = [startDate, dayjs().format(dateFormat)];
     let fromDate = this.state.fromDate;
-    if (dayjs(fromDate, 'MM-DD-YYYY').isBefore(dayjs(startDate, 'MM-DD-YYYY'))) {
-      fromDate = startDate;
+    // console.log(fromDate, 'x')
+    if (dayjs(fromDate).isBefore(dayjs(startDate, dateFormat))) {
+      fromDate = dayjs(startDate, dateFormat).toISOString();
+      // console.log(fromDate, 's')
     }
     this.setState({ displayList: display, dateBounds, fromDate }, () => {
       this.fetchAndCalculate()
@@ -249,10 +263,10 @@ class App extends Component {
 
     const index = this.state.assetList.map(e => e.id).indexOf(assets[newN - 1]);
     const startDate = this.state.assetList[index].limit;
-    const dateBounds = [startDate, dayjs().format('MM-DD-YYYY')];
+    const dateBounds = [startDate, dayjs().format(dateFormat)];
     let fromDate = this.state.fromDate;
-    if (dayjs(fromDate, 'MM-DD-YYYY').isBefore(dayjs(startDate, 'MM-DD-YYYY'))) {
-      fromDate = startDate;
+    if (dayjs(fromDate).isBefore(dayjs(startDate, dateFormat))) {
+      fromDate = dayjs(startDate, dateFormat).toISOString();
     }
 
     this.setState({ assetWeights: weights, assetDeltas: deltas, nAssets: newN, selectedAssets: assets, dateBounds, fromDate }, () => {
@@ -282,8 +296,8 @@ class App extends Component {
     const selectedAssets = this.state.selectedAssets;
     const weights = this.state.assetWeights;
     let url = '';
-    const from = dayjs(this.state.fromDate, 'MM-DD-YYYY').unix();
-    const to = dayjs(this.state.toDate, 'MM-DD-YYYY').unix();
+    const from = dayjs(this.state.fromDate, dateFormat).unix();
+    const to = dayjs(this.state.toDate, dateFormat).unix();
     // console.log(from, to);
     const diffs = Array(selectedAssets.length).fill(1);
     let diff = 0;
@@ -304,6 +318,7 @@ class App extends Component {
           cache[asset] = { [cacheKey]: jsonData }
         }
         prices = jsonData.prices;
+        // console.log(jsonData);
         diff = prices[prices.length - 1][1] / prices[0][1];
         diffs[i] = diff;
       } else {
@@ -371,16 +386,18 @@ class App extends Component {
                 <Box direction='row'>
                     <FormField label="From" margin='xsmall'>
                       <DateInput
+                        format={dateFormat}
                         value={this.state.fromDate}
                         onChange={(e) => this.changeDate('from', e)}
-                        bounds={this.state.dateBounds}
+                        calendarProps={{ bounds:this.state.dateBounds }}
                       />
                     </FormField>
                     <FormField label="To" margin='xsmall'>
                       <DateInput
+                        format={dateFormat}
                         value={this.state.toDate}
                         onChange={(e) => this.changeDate('to', e)}
-                        bounds={this.state.dateBounds}
+                        calendarProps={{ bounds:this.state.dateBounds }}
                       />
                     </FormField>
                   </Box>
@@ -393,7 +410,7 @@ class App extends Component {
                           onChange={(e) => this.changeAsset(i, e)}
                         />
                       </FormField>
-                      <FormField label="Weight" margin='xsmall'>
+                      <FormField label="Weight %" margin='xsmall'>
                         <NumberInput
                           value={this.getWeight(i)}
                           min={1.00}
@@ -403,7 +420,7 @@ class App extends Component {
                           step={0.1}
                           updateToString={true}
                           integers={2}
-                          suffix={' %'}
+                          pattern='(?<![\d.])(\d{1,2}|\d{0,2}\.\d{1,2})?(?![\d.])'
                         />
                       </FormField>
                     </Box>)
